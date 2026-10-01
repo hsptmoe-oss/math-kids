@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero">
+    <h1>សូមស្វាគមន៍មកកាន់ <span>Math Kids</span>! 🎉</h1>
+    <p>ជ្រើសរើសថ្នាក់របស់អ្នក ដើម្បីចាប់ផ្តើមរៀននិងលេងជាមួយគណិតវិទ្យា។</p>
+</div>
+
+<div class="grade-grid">
+    {% for grade in grades %}
+    <a href="/grade/{{ grade.id }}" class="grade-card" style="--card-color: {{ grade.color }};">
+        <div class="card-icon">{{ grade.icon }}</div>
+        <h2>{{ grade.name }}</h2>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

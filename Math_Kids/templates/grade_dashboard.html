@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: {{ info.color }};">
+    <h1>{{ info.icon }} {{ info.name }} - ផ្ទាំងគ្រប់គ្រង</h1>
+    <a href="/" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="dashboard-container">
+    <div class="action-cards">
+        <a href="/lesson/{{ grade_id }}" class="action-card lesson-card">
+            <div class="action-icon">📖</div>
+            <h2>រៀនមេរៀន</h2>
+            <p>មើលការពន្យល់ និងស្វែងយល់ពីរបៀបគណនា</p>
+        </a>
+        <a href="/exercise/{{ grade_id }}" class="action-card exercise-card">
+            <div class="action-icon">✍️</div>
+            <h2>លំហាត់សរសេរ</h2>
+            <p>បញ្ចូលចម្លើយដោយខ្លួនឯង</p>
+        </a>
+        <a href="/exercise_mcq/{{ grade_id }}" class="action-card exercise-card" style="border-color: #A8E6CF;">
+            <div class="action-icon">☑️</div>
+            <h2>ជ្រើសរើសចម្លើយ</h2>
+            <p>ជ្រើសរើសចម្លើយដែលត្រឹមត្រូវ (ងាយស្រួល)</p>
+        </a>
+        <a href="/exercise_challenge/{{ grade_id }}" class="action-card exercise-card" style="border-color: #FF8ED4;">
+            <div class="action-icon">⏱️</div>
+            <h2>ប្រកួតប្រជែង (Challenge)</h2>
+            <p>សាកល្បងល្បឿនក្នុងការគណនា</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

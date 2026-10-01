@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: #6C5CE7;">
+    <h1>📖 មេរៀនថ្នាក់ទី {{ grade_id }}</h1>
+    <a href="/grade/{{ grade_id }}" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="teaching-panel">
+    <h2>ស្វែងយល់ពីប្រមាណវិធីគណិតវិទ្យា</h2>
+    
+    <div class="concept-boxes">
+        <div class="concept-box">
+            <h3>ប្រមាណវិធីបូក (+)</h3>
+            <p>ការបូក គឺជាការយកចំនួនពីរ ឬច្រើនមកផ្គុំបញ្ចូលគ្នា ដើម្បីទទួលបានចំនួនសរុប។</p>
+            <div class="example">
+                ៥ + ៣ = ៨
+            </div>
+            <p class="hint">"អ្នកមានផ្លែឈើ ៥ គេឱ្យ ៣ ទៀត អ្នកមាន ៨"</p>
+        </div>
+        
+        <div class="concept-box">
+            <h3>ប្រមាណវិធីដក (-)</h3>
+            <p>ការដក គឺជាការយកចំនួនមួយចេញពីចំនួនមួយទៀត ដើម្បីរកចំនួនដែលនៅសល់។</p>
+            <div class="example">
+                ១០ - ៤ = ៦
+            </div>
+            <p class="hint">"អ្នកមានលុយ ១០ រៀល ទិញនំអស់ ៤ រៀល នៅសល់ ៦ រៀល"</p>
+        </div>
+        
+        {% if grade_id | int >= 3 %}
+        <div class="concept-box">
+            <h3>ប្រមាណវិធីគុណ (×)</h3>
+            <p>ការគុណ គឺជាការបូកចំនួនដដែលៗ ច្រើនដង។</p>
+            <div class="example">
+                ៤ × ៣ = ១២
+            </div>
+            <p class="hint">"បូកលេខ ៤ ចំនួន ៣ ដង: ៤ + ៤ + ៤ = ១២"</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="/exercise/{{ grade_id }}" class="btn btn-primary" style="font-size: 2rem; background: linear-gradient(135deg, #4ECDC4, #45B7D1);">🎮 ចាប់ផ្តើមធ្វើលំហាត់!</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: #FF8ED4;">
+    <h1>⏱️ ថ្នាក់ទី {{ grade_id }} - Challenge គណនាឱ្យលឿន</h1>
+    <a href="/grade/{{ grade_id }}" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="game-container">
+    <div class="score-board">
+        <div class="score-text">ពិន្ទុ: <span id="scoreDisplay">0</span> <span style="font-size:1.2rem; color:#636E72;">(កំណត់ត្រា: <span id="highScoreDisplay">0</span>)</span></div>
+        <div class="timer-box">ពេលវេលា: <span id="timeDisplay">60</span>s</div>
+    </div>
+    
+    <div id="gameArea">
+        <div class="question-box">
+            <h2 id="questionText" style="font-size: 4rem; color: #6C5CE7; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">...</h2>
+        </div>
+        
+        <div class="answer-box">
+            <input type="number" id="answerInput" placeholder="ចម្លើយ">
+            <button id="submitBtn" class="btn btn-primary">ផ្ទៀងផ្ទាត់</button>
+        </div>
+        
+        <div id="feedback" class="feedback hidden"></div>
+    </div>
+    
+    <div id="endScreen" class="hidden" style="text-align: center;">
+        <h2 id="endMessage" style="font-size: 3rem; color: #2d3436; margin-bottom: 20px;">អស់ម៉ោងហើយ! ⏰</h2>
+        <p style="font-size: 2rem; margin-bottom: 20px;">ពិន្ទុសរុបរបស់អ្នកគឺ: <span id="finalScore" style="color: #6C5CE7; font-weight: bold;">0</span></p>
+        <button onclick="location.reload()" class="btn btn-primary">លេងម្ដងទៀត 🔄</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const gradeId = "{{ grade_id }}";
+    let score = 0;
+    let timeLeft = 60;
+    let timerInterval;
+    let highScore = localStorage.getItem('highscore_grade_' + gradeId) || 0;
+    document.getElementById('highScoreDisplay').innerText = highScore;
+    
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timeDisplay').innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                endGame();
+            }
+        }, 1000);
+    }
+    
+    function endGame() {
+        document.getElementById('gameArea').classList.add('hidden');
+        document.getElementById('endScreen').classList.remove('hidden');
+        document.getElementById('finalScore').innerText = score;
+        
+        let endMsg = document.getElementById('endMessage');
+        if (score > highScore) {
+            localStorage.setItem('highscore_grade_' + gradeId, score);
+            endMsg.innerHTML = "🎉 អបអរសាទរ! អ្នកបានបំបែកកំណត់ត្រាថ្មី! 🌟";
+            endMsg.style.color = "#FF6B6B";
+        } else {
+            endMsg.innerHTML = "អស់ម៉ោងហើយ! ⏰";
+            endMsg.style.color = "#2d3436";
+        }
+    }
+    
+    function loadQuestion() {
+        fetch('/api/math/' + gradeId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.layout === 'vertical' && data.num1 && data.num2 && data.op) {
+                    let vMath = `<div class="vertical-math">
+                        <div>${data.num1}</div>
+                        <div class="op-row">
+                            <span class="op">${data.op.replace('*','×').replace('/','÷')}</span>
+                            <span>${data.num2}</span>
+                        </div>
+                    </div>`;
+                    document.getElementById('questionText').innerHTML = vMath;
+                } else {
+                    let questionDisplay = data.question.replace('*', '×').replace('/', '÷');
+                    document.getElementById('questionText').innerText = questionDisplay;
+                }
+                
+                document.getElementById('answerInput').value = '';
+                document.getElementById('feedback').className = 'feedback hidden';
+                
+                window.currentAnswer = data.answer;
+                document.getElementById('answerInput').focus();
+            });
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+        const userAnswer = parseFloat(document.getElementById('answerInput').value);
+        const feedback = document.getElementById('feedback');
+        
+        if (isNaN(userAnswer)) return;
+
+        if (userAnswer === window.currentAnswer) {
+            score += 10;
+            document.getElementById('scoreDisplay').innerText = score;
+            feedback.innerText = "🎉 លឿនណាស់!";
+            feedback.className = "feedback success";
+            
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById('answerInput').disabled = false;
+                loadQuestion();
+            }, 400); // Faster transition in challenge mode
+        } else {
+            feedback.innerText = "❌ ខុសហើយ!";
+            feedback.className = "feedback error shake-anim";
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+        }
+    });
+
+    document.getElementById('answerInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById('submitBtn').click();
+        }
+    });
+
+    loadQuestion();
+    startTimer();
+</script>
+{% endblock %}

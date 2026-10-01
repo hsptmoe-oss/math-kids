@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids - រៀនគណិតវិទ្យា</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700&family=Nunito:wght@400;600;700;800&family=Siemreap&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="/">🔢 Math Kids Cambodia</a>
+        </div>
+        <nav>
+            <a href="/">ទំព័រដើម (Home)</a>
+            <a href="#">អំពីយើង (About)</a>
+        </nav>
+    </header>
+    
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Challenge Modal -->
+    <div id="challengeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="font-size: 2.5rem; color: #6C5CE7;">អស្ចារ្យណាស់! 🎉</h2>
+            <p style="font-size: 1.5rem; margin: 20px 0;">អ្នកទទួលបាន ១០០ ពិន្ទុហើយ! តើអ្នកចង់សាកល្បងវគ្គប្រកួតប្រជែង (Challenge) ដើម្បីបំបែកកំណត់ត្រាដែរឬទេ?</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="document.getElementById('challengeModal').classList.add('hidden')" class="btn" style="background: #DFE4EA; color: #2d3436;">នៅលេងទីនេះសិន</button>
+                <a id="challengeLink" href="#" class="btn btn-primary" style="text-decoration: none;">ទៅវគ្គ Challenge 🚀</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Math Kids Cambodia. រចនាឡើងសម្រាប់កុមារ។</p>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

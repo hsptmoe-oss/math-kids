@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: #FF6B6B;">
+    <h1>🧸 ថ្នាក់មត្តេយ្យ - លេងជាមួយលេខ</h1>
+    <a href="/grade/k" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="game-container">
+    <div class="score-board">
+        <div class="score-text">ពិន្ទុ: <span id="scoreDisplay">0</span></div>
+        <div class="stars-container" id="starsDisplay"></div>
+    </div>
+    
+    <div class="question-box">
+        <h2 id="questionText">កំពុងរៀបចំសំណួរ...</h2>
+        <div class="visuals" id="visualContainer">
+            <!-- Appled/objects will be injected here -->
+        </div>
+    </div>
+    
+    <div class="answer-box">
+        <input type="number" id="answerInput" placeholder="ចម្លើយ...">
+        <button id="submitBtn" class="btn btn-primary">ឆ្លើយ</button>
+    </div>
+    
+    <div id="feedback" class="feedback hidden"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let score = 0;
+    
+    function updateScore() {
+        score += 10;
+        document.getElementById('scoreDisplay').innerText = score;
+        if (score % 30 === 0) {
+            document.getElementById('starsDisplay').innerHTML += '⭐';
+        }
+        if (score === 100) {
+            setTimeout(() => {
+                const challengeId = (typeof gradeId !== 'undefined') ? gradeId : 'k';
+                document.getElementById('challengeLink').href = "/exercise_challenge/" + challengeId;
+                document.getElementById('challengeModal').classList.remove('hidden');
+            }, 500);
+        }
+    }
+
+    function loadQuestion() {
+        fetch('/api/math/k')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('questionText').innerText = data.question;
+                document.getElementById('answerInput').value = '';
+                document.getElementById('feedback').className = 'feedback hidden';
+                
+                const visualContainer = document.getElementById('visualContainer');
+                visualContainer.innerHTML = '';
+                
+                // Add dynamic objects
+                let objectsHTML = '<div class="group">';
+                for(let i=0; i<data.num1; i++) {
+                    objectsHTML += `<span class="object">${data.emoji1}</span>`;
+                }
+                objectsHTML += '</div> <div class="operator">+</div> <div class="group">';
+                for(let i=0; i<data.num2; i++) {
+                    objectsHTML += `<span class="object">${data.emoji2}</span>`;
+                }
+                objectsHTML += '</div>';
+                visualContainer.innerHTML = objectsHTML;
+                
+                window.currentAnswer = data.answer;
+            });
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+        const userAnswer = parseInt(document.getElementById('answerInput').value);
+        const feedback = document.getElementById('feedback');
+        
+        if (isNaN(userAnswer)) return;
+        
+        if (userAnswer === window.currentAnswer) {
+            updateScore();
+            feedback.innerText = "🎉 ត្រឹមត្រូវ! ពូកែណាស់! 🌟";
+            feedback.className = "feedback success popup-anim";
+            
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById('answerInput').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                loadQuestion();
+            }, 1500);
+        } else {
+            feedback.innerText = "❌ មិនទាន់ត្រូវទេ សាកល្បងម្ដងទៀតណា៎! 💪";
+            feedback.className = "feedback error shake-anim";
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+        }
+    });
+
+    // Handle Enter key
+    document.getElementById('answerInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById('submitBtn').click();
+        }
+    });
+
+    // Load first question on start
+    loadQuestion();
+</script>
+{% endblock %}

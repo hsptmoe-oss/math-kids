@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: #4ECDC4;">
+    <h1>☑️ ថ្នាក់ទី {{ grade_id }} - លំហាត់ជ្រើសរើសចម្លើយ</h1>
+    <a href="/grade/{{ grade_id }}" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="game-container">
+    <div class="score-board">
+        <div class="score-text">ពិន្ទុ: <span id="scoreDisplay">0</span></div>
+        <div class="stars-container" id="starsDisplay"></div>
+    </div>
+    
+    <div class="question-box">
+        <h2 id="questionText" style="font-size: 4rem; color: #6C5CE7; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">...</h2>
+    </div>
+    
+    <div class="mcq-options" id="optionsContainer">
+        <!-- Buttons injected by JS -->
+    </div>
+    
+    <div id="feedback" class="feedback hidden"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const gradeId = "{{ grade_id }}";
+    let score = 0;
+    
+    function updateScore() {
+        score += 10;
+        document.getElementById('scoreDisplay').innerText = score;
+        if (score % 30 === 0) {
+            document.getElementById('starsDisplay').innerHTML += '⭐';
+        }
+        if (score === 100) {
+            setTimeout(() => {
+                const challengeId = (typeof gradeId !== 'undefined') ? gradeId : 'k';
+                document.getElementById('challengeLink').href = "/exercise_challenge/" + challengeId;
+                document.getElementById('challengeModal').classList.remove('hidden');
+            }, 500);
+        }
+    }
+    
+    function loadQuestion() {
+        fetch('/api/math/' + gradeId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.layout === 'vertical' && data.num1 && data.num2 && data.op) {
+                    let vMath = `<div class="vertical-math">
+                        <div>${data.num1}</div>
+                        <div class="op-row">
+                            <span class="op">${data.op.replace('*','×').replace('/','÷')}</span>
+                            <span>${data.num2}</span>
+                        </div>
+                    </div>`;
+                    document.getElementById('questionText').innerHTML = vMath;
+                } else {
+                    let questionDisplay = data.question.replace('*', '×').replace('/', '÷');
+                    document.getElementById('questionText').innerText = questionDisplay;
+                }
+                
+                document.getElementById('feedback').className = 'feedback hidden';
+                
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                
+                data.choices.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.className = 'mcq-btn';
+                    btn.innerText = choice;
+                    btn.onclick = () => checkAnswer(choice, data.answer);
+                    optionsContainer.appendChild(btn);
+                });
+            });
+    }
+
+    function checkAnswer(userChoice, correctAnswer) {
+        const feedback = document.getElementById('feedback');
+        
+        if (userChoice === correctAnswer) {
+            updateScore();
+            feedback.innerText = "🎉 ត្រឹមត្រូវ! ល្អណាស់!";
+            feedback.className = "feedback success popup-anim";
+            setTimeout(loadQuestion, 1500);
+        } else {
+            feedback.innerText = "❌ ខុសហើយ សាកល្បងម្ដងទៀត!";
+            feedback.className = "feedback error shake-anim";
+        }
+    }
+
+    loadQuestion();
+</script>
+{% endblock %}

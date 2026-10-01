@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="lesson-header" style="--lesson-color: #FF6B6B;">
+    <h1>📖 មេរៀនថ្នាក់មត្តេយ្យ - ការរាប់ និងបូកលេខ</h1>
+    <a href="/grade/k" class="back-btn">⬅️ ត្រឡប់ក្រោយ</a>
+</div>
+
+<div class="teaching-panel">
+    <h2>១. តោះរៀនរាប់ទាំងអស់គ្នា!</h2>
+    <div class="teaching-row">
+        <div class="number-card">1 <span>មួយ</span><br>🍎</div>
+        <div class="number-card">2 <span>ពីរ</span><br>🍎🍎</div>
+        <div class="number-card">3 <span>បី</span><br>🍎🍎🍎</div>
+    </div>
+    
+    <h2 style="margin-top: 40px;">២. ការបូកចូលគ្នា គឺការយកវត្ថុមកដាក់រួមគ្នា</h2>
+    <div class="visual-math-box">
+        <div class="visual-group">
+            <div class="items">🍎</div>
+            <div class="label">មាន ១</div>
+        </div>
+        <div class="math-op">+</div>
+        <div class="visual-group">
+            <div class="items">🍎🍎</div>
+            <div class="label">បន្ថែម ២ ទៀត</div>
+        </div>
+        <div class="math-op">=</div>
+        <div class="visual-group" style="background: #e1f5fe;">
+            <div class="items">🍎🍎🍎</div>
+            <div class="label">ស្មើនឹង ៣</div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="/exercise/k" class="btn btn-primary" style="font-size: 2rem;">🎮 ចូលទៅធ្វើលំហាត់ទាំងអស់គ្នា!</a>
+    </div>
+</div>
+{% endblock %}
